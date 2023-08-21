@@ -1,0 +1,13 @@
+name: filament
+version: 0.1.0
+
+authors:
+  - Aneesh <aneeshkrishnaparthasarathy@gmail.com>
+
+targets:
+  filament:
+    main: src/filament.cr
+
+crystal: '>= 1.22.1'
+
+license: MIT
