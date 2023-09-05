@@ -52,7 +52,7 @@ module Filament
       # Timeval structure matching system architecture
       struct TimeVal
         tv_sec : LibC::TimeT
-        tv_usec : LibC::SUSecondsT
+        tv_usec : LibC::SusecondsT
       end
 
       # Packet header returned by pcap_next_ex
@@ -140,7 +140,7 @@ module Filament
 
       # Discovers all capture-capable network interfaces present on the system
       def self.available_interfaces : Array(NetworkInterfaceInfo)
-        errbuf = Bytes.new(256, 0U8)
+        errbuf = Bytes.new(256, 0_u8)
         devs_ptr = Pointer(LibPcap::PcapIf*).malloc(1)
 
         ret = LibPcap.pcap_findalldevs(devs_ptr, errbuf.to_unsafe.as(LibC::Char*))
@@ -158,9 +158,9 @@ module Filament
           desc = dev.description ? String.new(dev.description) : nil
           flags = dev.flags
 
-          is_loopback = (flags & 0x00000001U32) != 0U32
-          is_up = (flags & 0x00000002U32) != 0U32
-          is_running = (flags & 0x00000004U32) != 0U32
+          is_loopback = (flags & 0x00000001_u32) != 0_u32
+          is_up = (flags & 0x00000002_u32) != 0_u32
+          is_running = (flags & 0x00000004_u32) != 0_u32
 
           result << NetworkInterfaceInfo.new(
             name: name,
@@ -187,7 +187,7 @@ module Filament
       )
         @active = false
         @bpf_program = LibPcap::BpfProgramRaw.new
-        errbuf = Bytes.new(256, 0U8)
+        errbuf = Bytes.new(256, 0_u8)
 
         handle = LibPcap.pcap_open_live(
           @device.to_unsafe,
@@ -207,7 +207,7 @@ module Filament
 
         # Query native datalink type
         dlt = LibPcap.pcap_datalink(handle)
-        @link_type = LinkType.from_value?(dlt) || LinkType::ETHERNET
+        @link_type = LinkType.from_value?(dlt) || LinkType::Ethernet
 
         # Apply BPF filter if provided
         if filter && !filter.empty?
@@ -220,7 +220,7 @@ module Filament
         handle = @handle
         raise LiveCaptureError.new("Capture handle closed") unless handle && @active
 
-        ret = LibPcap.pcap_compile(handle, pointerof(@bpf_program), expression.to_unsafe, 1, 0xFFFFFFFFU32)
+        ret = LibPcap.pcap_compile(handle, pointerof(@bpf_program), expression.to_unsafe, 1, 0xFFFFFFFF_u32)
         if ret != 0
           err = String.new(LibPcap.pcap_geterr(handle))
           raise LiveCaptureError.new("Failed to compile BPF expression '#{expression}': #{err}")
@@ -269,7 +269,7 @@ module Filament
             original_length: orig_len,
             captured_length: hdr.caplen,
             link_type: @link_type,
-            interface_id: 0U32
+            interface_id: 0_u32
           )
         when 0
           # Timeout expired

@@ -50,8 +50,8 @@ module Filament
       def initialize(path : String)
         @file = File.open(path, "r")
         @file_size = @file.size
-        @packet_count = 0U64
-        @cursor = 0L
+        @packet_count = 0_u64
+        @cursor = 0_i64
 
         if @file_size < 24
           @file.close
@@ -78,7 +78,7 @@ module Filament
         LibMman.madvise(mapped, @file_size.to_u64, MADV_SEQUENTIAL)
 
         # Parse global header (24 bytes)
-        magic = read_u32_raw(0L)
+        magic = read_u32_raw(0_i64)
         case magic
         when PcapMagic::IDENTICAL_MICRO
           @little_endian = true
@@ -98,21 +98,21 @@ module Filament
         end
 
         # Read snaplen at offset 16 and linktype at offset 20
-        @snap_len = read_u32(16L)
-        link_type_code = read_u32(20L)
-        @link_type = LinkType.from_value?(link_type_code.to_i32) || LinkType::ETHERNET
-        @cursor = 24L
+        @snap_len = read_u32(16_i64)
+        link_type_code = read_u32(20_i64)
+        @link_type = LinkType.from_value?(link_type_code.to_i32) || LinkType::Ethernet
+        @cursor = 24_i64
       end
 
       # Yields each packet, creating a Slice referencing mapped memory directly
       def each(& : RawPacket ->)
-        while @cursor + 16L <= @file_size
+        while @cursor + 16_i64 <= @file_size
           ts_sec = read_u32(@cursor)
-          ts_subsec = read_u32(@cursor + 4L)
-          cap_len = read_u32(@cursor + 8L)
-          orig_len = read_u32(@cursor + 12L)
+          ts_subsec = read_u32(@cursor + 4_i64)
+          cap_len = read_u32(@cursor + 8_i64)
+          orig_len = read_u32(@cursor + 12_i64)
 
-          @cursor += 16L
+          @cursor += 16_i64
 
           if @cursor + cap_len > @file_size
             break # File truncated
@@ -128,7 +128,7 @@ module Filament
                         Time.unix(ts_sec.to_i64) + Time::Span.new(nanoseconds: ts_subsec.to_i32 * 1_000)
                       end
 
-          @packet_count += 1U64
+          @packet_count += 1_u64
 
           yield RawPacket.new(
             data: packet_data,
@@ -136,14 +136,14 @@ module Filament
             original_length: orig_len,
             captured_length: cap_len,
             link_type: @link_type,
-            interface_id: 0U32
+            interface_id: 0_u32
           )
         end
       end
 
       # Resets cursor to read from beginning of packets
       def rewind : Nil
-        @cursor = 24L
+        @cursor = 24_i64
       end
 
       # Reads a 32-bit unsigned int at byte offset without endianness modification
@@ -164,10 +164,10 @@ module Filament
       end
 
       private def swap32(v : UInt32) : UInt32
-        ((v >> 24) & 0x000000FFU32) |
-        ((v >> 8) & 0x0000FF00U32) |
-        ((v << 8) & 0x00FF0000U32) |
-        ((v << 24) & 0xFF000000U32)
+        ((v >> 24) & 0x000000FF_u32) |
+        ((v >> 8) & 0x0000FF00_u32) |
+        ((v << 8) & 0x00FF0000_u32) |
+        ((v << 24) & 0xFF000000_u32)
       end
 
       # Unmaps memory and closes underlying file

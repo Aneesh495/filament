@@ -208,6 +208,11 @@ module Filament
       # stored explicitly for clarity and to match the PCAP format.
       getter capture_length : UInt32
 
+      # Alias for captured_length
+      def captured_length : UInt32
+        @capture_length
+      end
+
       # Which interface captured this packet. For classic PCAP this is
       # always 0 (there's only one interface). For pcapng, each interface
       # gets a sequential ID.

@@ -247,6 +247,8 @@ module Filament
     # reader.close
     # ```
     class PcapReader
+      include Enumerable(RawPacket)
+
       # The parsed global header from the file
       getter header : PcapHeader
 
@@ -278,6 +280,20 @@ module Filament
         @swapped = false
         @nano = false
         @header = read_global_header
+      end
+
+      # Yields each packet as a RawPacket struct, satisfying Enumerable
+      def each(&block : RawPacket ->)
+        each_packet do |data, timestamp, orig_len|
+          yield RawPacket.new(
+            data: data.dup,
+            timestamp: timestamp,
+            original_length: orig_len,
+            capture_length: data.size.to_u32,
+            interface_id: 0_u32,
+            link_type: LinkType.from_value(@header.link_type)
+          )
+        end
       end
 
       # Iterates over every packet in the file, yielding the raw packet

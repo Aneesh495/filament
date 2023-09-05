@@ -42,47 +42,47 @@ module Filament
   module Capture
     # Standard block types defined in the pcapng specification
     module PcapngBlockType
-      SECTION_HEADER       = 0x0A0D0D0AU32
-      INTERFACE_DESC       = 0x00000001U32
-      PACKET               = 0x00000002U32 # Deprecated in favor of EPB
-      SIMPLE_PACKET        = 0x00000003U32
-      NAME_RESOLUTION      = 0x00000004U32
-      INTERFACE_STATISTICS = 0x00000005U32
-      ENHANCED_PACKET      = 0x00000006U32
-      CUSTOM_COPYABLE      = 0x00000BADU32
-      CUSTOM_NON_COPYABLE  = 0x40000BADU32
+      SECTION_HEADER       = 0x0A0D0D0A_u32
+      INTERFACE_DESC       = 0x00000001_u32
+      PACKET               = 0x00000002_u32 # Deprecated in favor of EPB
+      SIMPLE_PACKET        = 0x00000003_u32
+      NAME_RESOLUTION      = 0x00000004_u32
+      INTERFACE_STATISTICS = 0x00000005_u32
+      ENHANCED_PACKET      = 0x00000006_u32
+      CUSTOM_COPYABLE      = 0x00000BAD_u32
+      CUSTOM_NON_COPYABLE  = 0x40000BAD_u32
     end
 
     # Byte order magic values found inside Section Header Blocks
     module PcapngByteOrder
-      LITTLE_ENDIAN = 0x1A2B3C4DU32
-      BIG_ENDIAN    = 0x4D3C2B1AU32
+      LITTLE_ENDIAN = 0x1A2B3C4D_u32
+      BIG_ENDIAN    = 0x4D3C2B1A_u32
     end
 
     # Generic option codes common across all pcapng block types
     module PcapngOptionCode
-      END_OF_OPT = 0x0000U16
-      COMMENT    = 0x0001U16
+      END_OF_OPT = 0x0000_u16
+      COMMENT    = 0x0001_u16
 
       # Interface Description Block options
-      IF_NAME        = 0x0002U16
-      IF_DESCRIPTION = 0x0003U16
-      IF_IPV4ADDR    = 0x0004U16
-      IF_IPV6ADDR    = 0x0005U16
-      IF_MACADDR     = 0x0006U16
-      IF_EUIADDR     = 0x0007U16
-      IF_SPEED       = 0x0008U16
-      IF_TSRESOL     = 0x0009U16
-      IF_TZONE       = 0x000AU16
-      IF_FILTER      = 0x000BU16
-      IF_OS          = 0x000CU16
-      IF_FCSLEN      = 0x000DU16
-      IF_TSOFFSET    = 0x000EU16
+      IF_NAME        = 0x0002_u16
+      IF_DESCRIPTION = 0x0003_u16
+      IF_IPV4ADDR    = 0x0004_u16
+      IF_IPV6ADDR    = 0x0005_u16
+      IF_MACADDR     = 0x0006_u16
+      IF_EUIADDR     = 0x0007_u16
+      IF_SPEED       = 0x0008_u16
+      IF_TSRESOL     = 0x0009_u16
+      IF_TZONE       = 0x000A_u16
+      IF_FILTER      = 0x000B_u16
+      IF_OS          = 0x000C_u16
+      IF_FCSLEN      = 0x000D_u16
+      IF_TSOFFSET    = 0x000E_u16
 
       # Enhanced Packet Block options
-      EPB_FLAGS     = 0x0002U16
-      EPB_HASH      = 0x0003U16
-      EPB_DROPCOUNT = 0x0004U16
+      EPB_FLAGS     = 0x0002_u16
+      EPB_HASH      = 0x0003_u16
+      EPB_DROPCOUNT = 0x0004_u16
     end
 
     # Represents an interface discovered within an Interface Description Block
@@ -101,7 +101,7 @@ module Filament
         @snap_len : UInt32,
         @name : String? = nil,
         @description : String? = nil,
-        @ts_resolution : UInt8 = 6U8, # Default to 10^-6 (microseconds)
+        @ts_resolution : UInt8 = 6_u8, # Default to 10^-6 (microseconds)
         @ts_is_power_of_two : Bool = false
       )
       end
@@ -121,13 +121,13 @@ module Filament
           case @ts_resolution
           when 6
             # Microseconds
-            sec = (raw_ts // 1_000_000U64).to_i64
-            usec = (raw_ts % 1_000_000U64).to_i32
+            sec = (raw_ts // 1_000_000_u64).to_i64
+            usec = (raw_ts % 1_000_000_u64).to_i32
             Time.unix(sec) + Time::Span.new(nanoseconds: usec * 1_000)
           when 9
             # Nanoseconds
-            sec = (raw_ts // 1_000_000_000U64).to_i64
-            nsec = (raw_ts % 1_000_000_000U64).to_i32
+            sec = (raw_ts // 1_000_000_000_u64).to_i64
+            nsec = (raw_ts % 1_000_000_000_u64).to_i32
             Time.unix(sec) + Time::Span.new(nanoseconds: nsec)
           else
             divisor = 10_u64 ** @ts_resolution
@@ -156,8 +156,8 @@ module Filament
       def initialize(@io : IO)
         @interfaces = [] of PcapngInterface
         @little_endian = true
-        @section_count = 0U32
-        @packet_count = 0U64
+        @section_count = 0_u32
+        @packet_count = 0_u64
         read_initial_section
       end
 
@@ -174,7 +174,7 @@ module Filament
         loop do
           packet = read_next_packet
           break unless packet
-          @packet_count += 1U64
+          @packet_count += 1_u64
           yield packet
         end
       end
@@ -215,7 +215,7 @@ module Filament
           raise PcapngError.new("Corrupted SHB: leading length #{block_len} != trailing length #{trailing_len}")
         end
 
-        @section_count += 1U32
+        @section_count += 1_u32
       end
 
       # Reads the next packet block, skipping metadata or configuration blocks
@@ -228,7 +228,7 @@ module Filament
           return nil unless block_type_raw
 
           block_len = read_u32
-          if block_len < 12U32
+          if block_len < 12_u32
             raise PcapngError.new("Invalid block length #{block_len} (minimum is 12 bytes)")
           end
 
@@ -269,7 +269,7 @@ module Filament
 
         # Reset interfaces for the new section as per specification
         @interfaces.clear
-        @section_count += 1U32
+        @section_count += 1_u32
       end
 
       # Parses an Interface Description Block and records interface parameters
@@ -278,13 +278,13 @@ module Filament
         _reserved = read_u16
         snap_len = read_u32
 
-        link_type = LinkType.from_value?(link_type_code.to_i32) || LinkType::ETHERNET
+        link_type = LinkType.from_value?(link_type_code.to_i32) || LinkType::Ethernet
 
         # Parse options
         options_len = block_len.to_i32 - 20 # 4 type + 4 len + 2 link + 2 res + 4 snap + 4 trailing len
         name : String? = nil
         desc : String? = nil
-        tsresol = 6U8
+        tsresol = 6_u8
         is_power_of_two = false
 
         if options_len > 0
@@ -319,8 +319,8 @@ module Filament
             when PcapngOptionCode::IF_TSRESOL
               if opt_len >= 1
                 raw_resol = opt_value[0]
-                is_power_of_two = (raw_resol & 0x80U8) != 0U8
-                tsresol = raw_resol & 0x7FU8
+                is_power_of_two = (raw_resol & 0x80_u8) != 0_u8
+                tsresol = raw_resol & 0x7F_u8
               end
             end
           end
@@ -356,8 +356,8 @@ module Filament
                       iface.timestamp_to_time(raw_ts)
                     else
                       # Fallback assuming microseconds
-                      sec = (raw_ts // 1_000_000U64).to_i64
-                      usec = (raw_ts % 1_000_000U64).to_i32
+                      sec = (raw_ts // 1_000_000_u64).to_i64
+                      usec = (raw_ts % 1_000_000_u64).to_i32
                       Time.unix(sec) + Time::Span.new(nanoseconds: usec * 1_000)
                     end
 
@@ -376,7 +376,7 @@ module Filament
 
         _trailing = read_u32
 
-        link_type = iface ? iface.link_type : LinkType::ETHERNET
+        link_type = iface ? iface.link_type : LinkType::Ethernet
 
         RawPacket.new(
           data: packet_data,
@@ -391,7 +391,7 @@ module Filament
       # Parses a Simple Packet Block (SPB)
       private def parse_simple_packet(block_len : UInt32) : RawPacket
         orig_len = read_u32
-        cap_len = [orig_len, block_len - 16U32].min
+        cap_len = [orig_len, block_len - 16_u32].min
 
         packet_data = Bytes.new(cap_len.to_i32)
         @io.read_fully(packet_data)
@@ -403,7 +403,7 @@ module Filament
 
         # SPB always implicitly maps to interface 0
         iface = @interfaces.first?
-        link_type = iface ? iface.link_type : LinkType::ETHERNET
+        link_type = iface ? iface.link_type : LinkType::Ethernet
 
         RawPacket.new(
           data: packet_data,
@@ -411,14 +411,14 @@ module Filament
           original_length: orig_len,
           captured_length: cap_len,
           link_type: link_type,
-          interface_id: 0U32
+          interface_id: 0_u32
         )
       end
 
       # Helper for reading 16-bit integers adhering to endianness
       private def read_u16 : UInt16
         val = @io.read_bytes(UInt16, IO::ByteFormat::LittleEndian)
-        @little_endian ? val : ((val >> 8) | ((val & 0xFFU16) << 8))
+        @little_endian ? val : ((val >> 8) | ((val & 0xFF_u16) << 8))
       end
 
       # Helper for reading 32-bit integers adhering to endianness
@@ -449,21 +449,21 @@ module Filament
 
       # Byte swapping utilities
       private def swap32(val : UInt32) : UInt32
-        ((val >> 24) & 0x000000FFU32) |
-        ((val >> 8) & 0x0000FF00U32) |
-        ((val << 8) & 0x00FF0000U32) |
-        ((val << 24) & 0xFF000000U32)
+        ((val >> 24) & 0x000000FF_u32) |
+        ((val >> 8) & 0x0000FF00_u32) |
+        ((val << 8) & 0x00FF0000_u32) |
+        ((val << 24) & 0xFF000000_u32)
       end
 
       private def swap64(val : UInt64) : UInt64
-        ((val >> 56) & 0x00000000000000FFU64) |
-        ((val >> 40) & 0x000000000000FF00U64) |
-        ((val >> 24) & 0x0000000000FF0000U64) |
-        ((val >> 8) & 0x00000000FF000000U64) |
-        ((val << 8) & 0x000000FF00000000U64) |
-        ((val << 24) & 0x0000FF0000000000U64) |
-        ((val << 40) & 0x00FF000000000000U64) |
-        ((val << 56) & 0xFF00000000000000U64)
+        ((val >> 56) & 0x00000000000000FF_u64) |
+        ((val >> 40) & 0x000000000000FF00_u64) |
+        ((val >> 24) & 0x0000000000FF0000_u64) |
+        ((val >> 8) & 0x00000000FF000000_u64) |
+        ((val << 8) & 0x000000FF00000000_u64) |
+        ((val << 24) & 0x0000FF0000000000_u64) |
+        ((val << 40) & 0x00FF000000000000_u64) |
+        ((val << 56) & 0xFF00000000000000_u64)
       end
 
       # Safely skip n bytes in the input stream
