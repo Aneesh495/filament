@@ -26,8 +26,8 @@ module Filament
 
         # Returns true if a is strictly before b in sequence space
         def self.lt?(a : UInt32, b : UInt32) : Bool
-          diff = (b &- a).to_i32
-          diff > 0
+          diff = b &- a
+          diff > 0_u32 && diff < 0x80000000_u32
         end
 
         # Returns true if a is less than or equal to b in sequence space
@@ -37,8 +37,8 @@ module Filament
 
         # Returns true if a is strictly after b in sequence space
         def self.gt?(a : UInt32, b : UInt32) : Bool
-          diff = (a &- b).to_i32
-          diff > 0
+          diff = a &- b
+          diff > 0_u32 && diff < 0x80000000_u32
         end
 
         # Returns true if a is greater than or equal to b in sequence space
@@ -48,7 +48,12 @@ module Filament
 
         # Signed distance between two sequence numbers (a - b)
         def self.diff(a : UInt32, b : UInt32) : Int64
-          (a &- b).to_i64
+          raw = a &- b
+          if raw < 0x80000000_u32
+            raw.to_i64
+          else
+            -( (0_u32 &- raw).to_i64 )
+          end
         end
 
         # Normalizes an absolute sequence number relative to an Initial Sequence Number
