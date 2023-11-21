@@ -16,7 +16,7 @@
 # License: MIT
 # =============================================================================
 
-require "../dissector/dissector"
+require "../dissect/decoded_packet"
 
 module Filament
   module Flow
