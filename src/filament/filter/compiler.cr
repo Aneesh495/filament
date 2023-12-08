@@ -56,7 +56,7 @@ module Filament
         end
       end
 
-      private def emit(ins : Instruction) : Int32
+      protected def emit(ins : Instruction) : Int32
         pos = @instructions.size
         @instructions << ins
         pos
@@ -159,37 +159,54 @@ module Filament
       # Short-circuit logical AND
       private def compile_short_circuit_and(expr : BinaryOpExpr) : UInt8
         dst = alloc_reg
-        left_reg = compile_expr(expr.left)
+        false_const = add_const(false)
+        true_const = add_const(true)
 
-        # Emit jump-if-false past right evaluation
-        jump_idx = emit(Instruction.new(Opcode::JumpIfFalse, src1: left_reg, target: 0))
+        left_reg = compile_expr(expr.left)
+        jump_false_idx = emit(Instruction.new(Opcode::JumpIfFalse, src1: left_reg, target: 0))
 
         right_reg = compile_expr(expr.right)
-        # Result is right_reg if left was true
-        emit(Instruction.new(Opcode::CmpEq, dst: dst, src1: right_reg, src2: right_reg)) # copy/test
+        true_reg = alloc_reg
+        emit(Instruction.new(Opcode::LoadConst, dst: true_reg, const_idx: true_const))
+        emit(Instruction.new(Opcode::CmpEq, dst: dst, src1: right_reg, src2: true_reg))
+        free_reg
+
+        jump_end_idx = emit(Instruction.new(Opcode::Jump, target: 0))
+
+        false_target = @instructions.size
+        @instructions[jump_false_idx] = @instructions[jump_false_idx].with_target(false_target)
+        emit(Instruction.new(Opcode::LoadConst, dst: dst, const_idx: false_const))
 
         end_target = @instructions.size
-        # Patch false jump to bypass right side and load false
-        @instructions[jump_idx] = @instructions[jump_idx].with_target(end_target)
+        @instructions[jump_end_idx] = @instructions[jump_end_idx].with_target(end_target)
 
-        free_reg # right_reg
-        free_reg # left_reg
+        free_reg
+        free_reg
         dst
       end
 
       # Short-circuit logical OR
       private def compile_short_circuit_or(expr : BinaryOpExpr) : UInt8
         dst = alloc_reg
-        left_reg = compile_expr(expr.left)
+        true_const = add_const(true)
 
-        # Emit jump-if-true past right evaluation
-        jump_idx = emit(Instruction.new(Opcode::JumpIfTrue, src1: left_reg, target: 0))
+        left_reg = compile_expr(expr.left)
+        jump_true_idx = emit(Instruction.new(Opcode::JumpIfTrue, src1: left_reg, target: 0))
 
         right_reg = compile_expr(expr.right)
-        emit(Instruction.new(Opcode::CmpEq, dst: dst, src1: right_reg, src2: right_reg))
+        true_reg = alloc_reg
+        emit(Instruction.new(Opcode::LoadConst, dst: true_reg, const_idx: true_const))
+        emit(Instruction.new(Opcode::CmpEq, dst: dst, src1: right_reg, src2: true_reg))
+        free_reg
+
+        jump_end_idx = emit(Instruction.new(Opcode::Jump, target: 0))
+
+        true_target = @instructions.size
+        @instructions[jump_true_idx] = @instructions[jump_true_idx].with_target(true_target)
+        emit(Instruction.new(Opcode::LoadConst, dst: dst, const_idx: true_const))
 
         end_target = @instructions.size
-        @instructions[jump_idx] = @instructions[jump_idx].with_target(end_target)
+        @instructions[jump_end_idx] = @instructions[jump_end_idx].with_target(end_target)
 
         free_reg
         free_reg
