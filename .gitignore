@@ -1,5 +1,17 @@
-/docs/
 /lib/
 /bin/
 /.shards/
 *.dwarf
+*.o
+*.a
+*.so
+*.dylib
+__pycache__/
+*.pyc
+.DS_Store
+
+# Ignore generated HTML docs from crystal docs, but preserve markdown documentation
+/docs/*.html
+/docs/css/
+/docs/js/
+/docs/index.json

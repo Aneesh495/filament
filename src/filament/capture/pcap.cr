@@ -530,6 +530,16 @@ module Filament
         new(io, header, owns_io: true)
       end
 
+      # Opens a PCAP file for writing, yields writer to block, and guarantees closure
+      def self.open(path : String, link_type : UInt32 = LINKTYPE_ETHERNET, snaplen : UInt32 = 65535_u32, &block : PcapWriter ->)
+        writer = new(path, link_type, snaplen)
+        begin
+          yield writer
+        ensure
+          writer.close
+        end
+      end
+
       # Creates a writer from an existing IO and header. Writes the
       # global header to the IO immediately.
       def initialize(@io : IO, @header : PcapHeader, @owns_io : Bool = false)

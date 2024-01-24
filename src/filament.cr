@@ -9,9 +9,9 @@
 # License: MIT
 # =============================================================================
 
+require "./filament/version"
 require "./filament/engine"
 require "./filament/cli/runner"
 
 module Filament
-  VERSION = "0.1.0"
 end

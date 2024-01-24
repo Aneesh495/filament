@@ -22,7 +22,7 @@ void filament_bytes_to_hex(const uint8_t *src, size_t src_len, char *dst) {
 
 #if defined(__ARM_NEON) || defined(__ARM_NEON__)
     /* NEON vectorized 8-byte chunk loop -> produces 16 hex characters */
-    const uint8x8_t hex_table = vld1_u8((const uint8_t *)hex_chars);
+    const uint8x16_t hex_table = vld1q_u8((const uint8_t *)hex_chars);
     const uint8x8_t mask_low = vdup_n_u8(0x0F);
 
     while (i + 8 <= src_len) {

@@ -1,0 +1,136 @@
+require "../spec_helper"
+require "../../src/filament/engine"
+
+describe "Filament End-to-End Pipeline Integration" do
+  it "processes a multi-protocol capture trace through dissection, FQL filtering, and analytics" do
+    temp_pcap = File.tempfile("filament_test", ".pcap")
+    pcap_path = temp_pcap.path
+
+    # Build synthetic multi-packet PCAP trace
+    Filament::Capture::PcapWriter.open(pcap_path) do |writer|
+      t0 = Time.utc(2026, 1, 1, 10, 0, 0)
+
+      # 1. ARP Request
+      arp_pkt = Bytes[
+        0xff, 0xff, 0xff, 0xff, 0xff, 0xff, # Dst: Broadcast
+        0x00, 0x11, 0x22, 0x33, 0x44, 0x55, # Src
+        0x08, 0x06,                         # ARP
+        0x00, 0x01, 0x08, 0x00, 0x06, 0x04, 0x00, 0x01,
+        0x00, 0x11, 0x22, 0x33, 0x44, 0x55,
+        0x0a, 0x00, 0x00, 0x01,             # 10.0.0.1
+        0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+        0x0a, 0x00, 0x00, 0x02              # 10.0.0.2
+      ]
+      writer.write_packet(arp_pkt, t0)
+
+      # 2. DNS Query (10.0.0.1 -> 1.1.1.1 UDP 53)
+      t1 = t0 + 10.milliseconds
+      dns_q = Bytes[
+        0x00, 0x50, 0x56, 0x00, 0x00, 0x01,
+        0x00, 0x11, 0x22, 0x33, 0x44, 0x55,
+        0x08, 0x00,                         # IPv4
+        0x45, 0x00, 0x00, 0x37,
+        0x00, 0x01, 0x40, 0x00,
+        0x40, 0x11, 0x00, 0x00,             # UDP
+        0x0a, 0x00, 0x00, 0x01,             # 10.0.0.1
+        0x01, 0x01, 0x01, 0x01,             # 1.1.1.1
+        0xd0, 0x00, 0x00, 0x35,             # 53248 -> 53
+        0x00, 0x23, 0x00, 0x00,             # Len 35
+        # DNS payload: ID=0xbeef, Query "example.org", A
+        0xbe, 0xef, 0x01, 0x00, 0x00, 0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+        0x07, 0x65, 0x78, 0x61, 0x6d, 0x70, 0x6c, 0x65,
+        0x03, 0x6f, 0x72, 0x67, 0x00,
+        0x00, 0x01, 0x00, 0x01
+      ]
+      writer.write_packet(dns_q, t1)
+
+      # 3. DNS Response (1.1.1.1 -> 10.0.0.1)
+      t2 = t1 + 15.milliseconds # 15ms latency
+      dns_r = Bytes[
+        0x00, 0x11, 0x22, 0x33, 0x44, 0x55,
+        0x00, 0x50, 0x56, 0x00, 0x00, 0x01,
+        0x08, 0x00,
+        0x45, 0x00, 0x00, 0x47,
+        0x00, 0x02, 0x40, 0x00,
+        0x38, 0x11, 0x00, 0x00,
+        0x01, 0x01, 0x01, 0x01,
+        0x0a, 0x00, 0x00, 0x01,
+        0x00, 0x35, 0xd0, 0x00,
+        0x00, 0x33, 0x00, 0x00,
+        # DNS response payload: ID=0xbeef, QR=1, Answers: 93.184.216.34
+        0xbe, 0xef, 0x81, 0x80, 0x00, 0x01, 0x00, 0x01, 0x00, 0x00, 0x00, 0x00,
+        0x07, 0x65, 0x78, 0x61, 0x6d, 0x70, 0x6c, 0x65, 0x03, 0x6f, 0x72, 0x67, 0x00,
+        0x00, 0x01, 0x00, 0x01,
+        0xc0, 0x0c, 0x00, 0x01, 0x00, 0x01, 0x00, 0x00, 0x00, 0x3c, 0x00, 0x04,
+        0x5d, 0xb8, 0xd8, 0x22
+      ]
+      writer.write_packet(dns_r, t2)
+
+      # 4. TCP SYN (10.0.0.1 -> 93.184.216.34 port 80)
+      t3 = t2 + 5.milliseconds
+      tcp_syn = Bytes[
+        0x00, 0x50, 0x56, 0x00, 0x00, 0x01,
+        0x00, 0x11, 0x22, 0x33, 0x44, 0x55,
+        0x08, 0x00,
+        0x45, 0x00, 0x00, 0x28,
+        0x00, 0x03, 0x40, 0x00,
+        0x40, 0x06, 0x00, 0x00,
+        0x0a, 0x00, 0x00, 0x01,
+        0x5d, 0xb8, 0xd8, 0x22,
+        0xe0, 0x00, 0x00, 0x50,             # 57344 -> 80
+        0x00, 0x00, 0x01, 0x00,             # Seq 256
+        0x00, 0x00, 0x00, 0x00,
+        0x50, 0x02, 0xfa, 0xf0,             # SYN
+        0x00, 0x00, 0x00, 0x00
+      ]
+      writer.write_packet(tcp_syn, t3)
+    end
+
+    # Test full ingestion through engine
+    engine = Filament::Engine.new
+    matched_packets = [] of Filament::Dissect::DecodedPacket
+
+    engine.run_pcap(pcap_path) do |decoded|
+      matched_packets << decoded
+    end
+
+    matched_packets.size.should eq(4)
+    engine.packets_processed.should eq(4_u64)
+    engine.flow_table.size.should be >= 2
+
+    # Verify protocol hierarchy captured protocols
+    engine.hierarchy.total_packets.should eq(4_u64)
+    eth = engine.hierarchy.root_nodes[Filament::Dissect::Protocol::Ethernet]
+    eth.should_not be_nil
+
+    # Test filtered execution: only DNS packets
+    dns_engine = Filament::Engine.new(filter_expr: "dns")
+    dns_matches = [] of Filament::Dissect::DecodedPacket
+    dns_engine.run_pcap(pcap_path) do |decoded|
+      dns_matches << decoded
+    end
+
+    dns_matches.size.should eq(2)
+    dns_matches.all? { |p| p.has_protocol?(Filament::Dissect::Protocol::Dns) }.should be_true
+
+    # Test filtered execution: only TCP destination port 80
+    http_engine = Filament::Engine.new(filter_expr: "tcp.dst_port == 80")
+    http_matches = [] of Filament::Dissect::DecodedPacket
+    http_engine.run_pcap(pcap_path) do |decoded|
+      http_matches << decoded
+    end
+
+    http_matches.size.should eq(1)
+    http_matches.first.field("tcp.dst_port").should eq(80_u16)
+
+    # Test report generation without crashing
+    report_io = IO::Memory.new
+    engine.print_summary_report(report_io)
+    report_text = report_io.to_s
+    report_text.includes?("FILAMENT TRAFFIC FORENSICS REPORT").should be_true
+    report_text.includes?("PROTOCOL HIERARCHY").should be_true
+    report_text.includes?("TOP ENDPOINTS").should be_true
+
+    temp_pcap.delete
+  end
+end
