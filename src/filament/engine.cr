@@ -13,6 +13,7 @@
 # License: MIT
 # =============================================================================
 
+require "./version"
 require "./capture/packet"
 require "./capture/pcap"
 require "./capture/pcapng"
@@ -145,7 +146,9 @@ module Filament
       Capture::PcapReader.open(path) do |reader|
         reader.each do |raw_pkt|
           process_raw_packet(raw_pkt, &block)
-          break if max_packets && @packets_processed >= max_packets
+          if (limit = max_packets) && @packets_processed >= limit
+            break
+          end
         end
       end
     end

@@ -274,6 +274,16 @@ module Filament
         new(io, owns_io: true)
       end
 
+      # Opens a PCAP file by path and yields reader to block
+      def self.open(path : String, &block : PcapReader ->)
+        reader = new(path)
+        begin
+          yield reader
+        ensure
+          reader.close
+        end
+      end
+
       # Creates a reader from an existing IO object. If `owns_io` is
       # true, calling `close` will also close the underlying IO.
       def initialize(@io : IO, @owns_io : Bool = false)

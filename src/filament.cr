@@ -1,5 +1,5 @@
 # =============================================================================
-# filament.cr - Core entry point and module definitions
+# filament.cr - Core library entry point
 # =============================================================================
 #
 # Filament is a programmable network protocol dissector, flow correlation,
@@ -9,13 +9,8 @@
 # License: MIT
 # =============================================================================
 
-require "./filament/capture/packet"
-require "./filament/capture/pcap"
-require "./filament/capture/pcapng"
-require "./filament/capture/ring_buffer"
-require "./filament/capture/bpf"
-require "./filament/capture/mmap_reader"
-require "./filament/capture/live"
+require "./filament/engine"
+require "./filament/cli/runner"
 
 module Filament
   VERSION = "0.1.0"

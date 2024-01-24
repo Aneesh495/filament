@@ -2,12 +2,12 @@ name: filament
 version: 0.1.0
 
 authors:
-  - Aneesh <aneeshkrishnaparthasarathy@gmail.com>
+  - Aneesh Krishna <aneesh495@users.noreply.github.com>
+
+description: Programmable network protocol dissector and traffic analysis engine
 
 targets:
   filament:
-    main: src/filament.cr
-
-crystal: '>= 1.22.1'
+    main: src/filament/cli/main.cr
 
 license: MIT

@@ -232,6 +232,18 @@ module Filament
       )
       end
 
+      # Convenience constructor allowing captured_length keyword
+      def self.new(
+        data : Bytes,
+        timestamp : Time,
+        original_length : UInt32,
+        captured_length : UInt32,
+        link_type : LinkType = LinkType::Ethernet,
+        interface_id : UInt32 = 0_u32
+      )
+        new(data, timestamp, original_length, captured_length, interface_id, link_type)
+      end
+
       # Was this packet truncated? Returns true if the captured data is
       # shorter than what was actually on the wire.
       def truncated? : Bool
