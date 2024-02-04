@@ -33,30 +33,30 @@ module Filament
   module Dissect
     module Layer7
       module DnsType
-        A     = 1_u16
-        NS    = 2_u16
-        CNAME = 5_u16
-        SOA   = 6_u16
-        PTR   = 12_u16
-        MX    = 15_u16
-        TXT   = 16_u16
-        AAAA  = 28_u16
-        SRV   = 33_u16
-        OPT   = 41_u16 # EDNS0
+        A     =   1_u16
+        NS    =   2_u16
+        CNAME =   5_u16
+        SOA   =   6_u16
+        PTR   =  12_u16
+        MX    =  15_u16
+        TXT   =  16_u16
+        AAAA  =  28_u16
+        SRV   =  33_u16
+        OPT   =  41_u16 # EDNS0
         ANY   = 255_u16
       end
 
       module DnsRcode
-        NO_ERROR  = 0_u8
-        FORM_ERR  = 1_u8
-        SERV_FAIL = 2_u8
-        NXDOMAIN  = 3_u8
-        NOT_IMP   = 4_u8
-        REFUSED   = 5_u8
-        YXDOMAIN  = 6_u8
-        YXRRSET   = 7_u8
-        NXRRSET   = 8_u8
-        NOT_AUTH  = 9_u8
+        NO_ERROR  =  0_u8
+        FORM_ERR  =  1_u8
+        SERV_FAIL =  2_u8
+        NXDOMAIN  =  3_u8
+        NOT_IMP   =  4_u8
+        REFUSED   =  5_u8
+        YXDOMAIN  =  6_u8
+        YXRRSET   =  7_u8
+        NXRRSET   =  8_u8
+        NOT_AUTH  =  9_u8
         NOT_ZONE  = 10_u8
       end
 
@@ -145,7 +145,7 @@ module Filament
           when DnsType::SRV   then "SRV"
           when DnsType::OPT   then "OPT (EDNS0)"
           when DnsType::ANY   then "ANY"
-          else "TYPE#{rtype}"
+          else                     "TYPE#{rtype}"
           end
         end
 
@@ -203,7 +203,7 @@ module Filament
                        when DnsRcode::NXDOMAIN  then "Non-existent domain (NXDOMAIN)"
                        when DnsRcode::NOT_IMP   then "Not implemented"
                        when DnsRcode::REFUSED   then "Query refused"
-                       else "RCODE #{rcode}"
+                       else                          "RCODE #{rcode}"
                        end
           fields["dns.rcode_name"] = rcode_name
 

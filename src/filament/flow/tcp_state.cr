@@ -61,7 +61,7 @@ module Filament
         syn : Bool,
         ack : Bool,
         fin : Bool,
-        rst : Bool
+        rst : Bool,
       ) : TcpState
         # Immediate reset
         if rst
@@ -78,7 +78,6 @@ module Filament
             @server_state = TcpState::Listen
             @state = TcpState::SynSent
           end
-
         when TcpState::SynSent
           if direction == FlowDirection::Reverse && syn && ack
             @server_state = TcpState::SynReceived
@@ -88,14 +87,12 @@ module Filament
             @server_state = TcpState::SynReceived
             @state = TcpState::SynReceived
           end
-
         when TcpState::SynReceived
           if direction == FlowDirection::Forward && ack
             @client_state = TcpState::Established
             @server_state = TcpState::Established
             @state = TcpState::Established
           end
-
         when TcpState::Established
           if fin
             if direction == FlowDirection::Forward
@@ -108,7 +105,6 @@ module Filament
               @state = TcpState::CloseWait
             end
           end
-
         when TcpState::FinWait1
           if direction == FlowDirection::Reverse
             if ack && !fin
@@ -121,30 +117,25 @@ module Filament
               @state = TcpState::TimeWait
             end
           end
-
         when TcpState::FinWait2
           if direction == FlowDirection::Reverse && fin
             @state = TcpState::TimeWait
           end
-
         when TcpState::CloseWait
           if direction == FlowDirection::Forward && fin
             @client_state = TcpState::LastAck
             @state = TcpState::LastAck
           end
-
         when TcpState::Closing
           if ack
             @state = TcpState::TimeWait
           end
-
         when TcpState::LastAck
           if ack
             @state = TcpState::Closed
             @client_state = TcpState::Closed
             @server_state = TcpState::Closed
           end
-
         when TcpState::TimeWait
           # Remains in TimeWait until timeout or recycling
         end

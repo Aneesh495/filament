@@ -116,7 +116,7 @@ module Filament
                       when 5 then "Broadcast"
                       when 6 then "NTP control"
                       when 7 then "Private use"
-                      else "Mode #{mode}"
+                      else        "Mode #{mode}"
                       end
           fields["ntp.mode_name"] = mode_name
 

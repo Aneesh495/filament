@@ -47,18 +47,18 @@ module Filament
       end
 
       module DhcpOptionCode
-        PAD              = 0_u8
-        SUBNET_MASK      = 1_u8
-        ROUTER           = 3_u8
-        DNS_SERVERS      = 6_u8
-        HOSTNAME         = 12_u8
-        DOMAIN_NAME      = 15_u8
-        REQUESTED_IP     = 50_u8
-        LEASE_TIME       = 51_u8
-        MESSAGE_TYPE     = 53_u8
-        SERVER_ID        = 54_u8
-        PARAM_REQ_LIST   = 55_u8
-        END_OF_OPTIONS   = 255_u8
+        PAD            =   0_u8
+        SUBNET_MASK    =   1_u8
+        ROUTER         =   3_u8
+        DNS_SERVERS    =   6_u8
+        HOSTNAME       =  12_u8
+        DOMAIN_NAME    =  15_u8
+        REQUESTED_IP   =  50_u8
+        LEASE_TIME     =  51_u8
+        MESSAGE_TYPE   =  53_u8
+        SERVER_ID      =  54_u8
+        PARAM_REQ_LIST =  55_u8
+        END_OF_OPTIONS = 255_u8
       end
 
       class DhcpDissector < Dissector
@@ -182,7 +182,7 @@ module Filament
                             when DhcpMessageType::NAK      then "NAK"
                             when DhcpMessageType::RELEASE  then "Release"
                             when DhcpMessageType::INFORM   then "Inform"
-                            else "Type #{msg_type}"
+                            else                                "Type #{msg_type}"
                             end
                 fields["dhcp.msg_type_name"] = type_name
               end

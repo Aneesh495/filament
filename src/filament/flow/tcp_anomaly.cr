@@ -41,7 +41,7 @@ module Filament
         @timestamp : Time,
         @seq : UInt32,
         @length : UInt32,
-        @description : String
+        @description : String,
       )
       end
     end
@@ -77,7 +77,7 @@ module Filament
         window : UInt16,
         syn : Bool,
         fin : Bool,
-        timestamp : Time
+        timestamp : Time,
       ) : TcpAnomalyType?
         # Detect Zero Window advertisement
         if window == 0_u16 && !syn && !fin

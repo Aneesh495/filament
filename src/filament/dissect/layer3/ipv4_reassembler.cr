@@ -144,7 +144,7 @@ module Filament
           frag_offset : UInt16,
           mf : Bool,
           payload : Bytes,
-          timestamp : Time
+          timestamp : Time,
         ) : Bytes?
           # If not fragmented, return payload as is
           if frag_offset == 0_u16 && !mf

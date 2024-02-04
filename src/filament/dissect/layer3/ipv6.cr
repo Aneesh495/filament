@@ -42,14 +42,14 @@ module Filament
     module Layer3
       # IPv6 Extension Header types
       module IPv6ExtensionHeader
-        HOP_BY_HOP = 0_u8
-        ROUTING    = 43_u8
-        FRAGMENT   = 44_u8
-        ESP        = 50_u8
-        AH         = 51_u8
-        DEST_OPTS  = 60_u8
+        HOP_BY_HOP =   0_u8
+        ROUTING    =  43_u8
+        FRAGMENT   =  44_u8
+        ESP        =  50_u8
+        AH         =  51_u8
+        DEST_OPTS  =  60_u8
         MOBILITY   = 135_u8
-        NO_NEXT    = 59_u8
+        NO_NEXT    =  59_u8
       end
 
       class IPv6Dissector < Dissector
@@ -178,7 +178,7 @@ module Filament
               hdr_type_name = case current_next_hdr
                               when IPv6ExtensionHeader::HOP_BY_HOP then "Hop-by-Hop"
                               when IPv6ExtensionHeader::ROUTING    then "Routing"
-                              else "Destination Options"
+                              else                                      "Destination Options"
                               end
               ext_hdrs << hdr_type_name
 
@@ -216,11 +216,11 @@ module Filament
           wire_payload_len = data.size.to_u32 - current_offset
 
           next_proto : Protocol? = case current_next_hdr
-                                   when IpProtocol::TCP    then Protocol::Tcp
-                                   when IpProtocol::UDP    then Protocol::Udp
-                                   when IpProtocol::ICMPV6 then Protocol::Icmpv6
-                                   else nil
-                                   end
+          when IpProtocol::TCP    then Protocol::Tcp
+          when IpProtocol::UDP    then Protocol::Udp
+          when IpProtocol::ICMPV6 then Protocol::Icmpv6
+          else                         nil
+          end
 
           DissectResult.new(
             protocol: protocol,

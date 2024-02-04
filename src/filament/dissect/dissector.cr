@@ -81,7 +81,7 @@ module Filament
         @payload_length : UInt32,
         @fields : Hash(String, FieldValue) = Hash(String, FieldValue).new,
         @next_protocol : Protocol? = nil,
-        @errors : Array(String) = [] of String
+        @errors : Array(String) = [] of String,
       )
       end
 
@@ -106,7 +106,7 @@ module Filament
         when UInt16 then val.to_u32
         when UInt8  then val.to_u32
         when Int32  then val.to_u32
-        else nil
+        else             nil
         end
       end
 
@@ -115,7 +115,7 @@ module Filament
         case val
         when UInt16 then val
         when UInt8  then val.to_u16
-        else nil
+        else             nil
         end
       end
 
@@ -199,22 +199,22 @@ module Filament
 
         # Determine initial layer 2 protocol from capture link type
         current_proto : Protocol? = case packet.link_type
-                                    when Filament::Capture::LinkType::Ethernet
-                                      Protocol::Ethernet
-                                    when Filament::Capture::LinkType::LinuxSll, Filament::Capture::LinkType::LinuxSll2
-                                      Protocol::Sll
-                                    when Filament::Capture::LinkType::Raw
-                                      # Infer IPv4 or IPv6 from initial nibble
-                                      first_byte = data[0]?
-                                      if first_byte
-                                        version = first_byte >> 4
-                                        version == 6 ? Protocol::IPv6 : Protocol::IPv4
-                                      else
-                                        nil
-                                      end
-                                    else
-                                      Protocol::Ethernet
-                                    end
+        when Filament::Capture::LinkType::Ethernet
+          Protocol::Ethernet
+        when Filament::Capture::LinkType::LinuxSll, Filament::Capture::LinkType::LinuxSll2
+          Protocol::Sll
+        when Filament::Capture::LinkType::Raw
+          # Infer IPv4 or IPv6 from initial nibble
+          first_byte = data[0]?
+          if first_byte
+            version = first_byte >> 4
+            version == 6 ? Protocol::IPv6 : Protocol::IPv4
+          else
+            nil
+          end
+        else
+          Protocol::Ethernet
+        end
 
         current_offset = 0_u32
 

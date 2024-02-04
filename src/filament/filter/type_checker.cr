@@ -82,7 +82,6 @@ module Filament
             @errors << "Right operand of '#{expr.op}' must be boolean, got #{right_t}"
           end
           TypeId::Bool
-
         when TokenType::In
           if right_t == TypeId::Cidr
             if left_t != TypeId::IpAddress && left_t != TypeId::Unknown
@@ -90,24 +89,20 @@ module Filament
             end
           end
           TypeId::Bool
-
         when TokenType::Match
           if left_t != TypeId::String && left_t != TypeId::Unknown
             @errors << "Left operand of regex match '~=' must be string, got #{left_t}"
           end
           TypeId::Bool
-
         when TokenType::Eq, TokenType::Ne
           # Equality allowed between matching types or unknown
           TypeId::Bool
-
         when TokenType::Lt, TokenType::Le, TokenType::Gt, TokenType::Ge
           if (left_t == TypeId::String && right_t != TypeId::String) ||
              (left_t == TypeId::Integer && right_t != TypeId::Integer)
             @errors << "Cannot compare incompatible types #{left_t} and #{right_t}"
           end
           TypeId::Bool
-
         else
           TypeId::Unknown
         end

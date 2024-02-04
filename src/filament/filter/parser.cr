@@ -44,7 +44,7 @@ module Filament
         "eth", "ethernet", "vlan", "arp", "sll", "ppp",
         "ip", "ipv4", "ipv6", "icmp", "icmpv6",
         "tcp", "udp",
-        "dns", "http", "tls", "ssl", "dhcp", "bootp", "ntp", "smtp", "websocket", "ws"
+        "dns", "http", "tls", "ssl", "dhcp", "bootp", "ntp", "smtp", "websocket", "ws",
       ]
 
       def initialize(@lexer : Lexer)
@@ -73,16 +73,16 @@ module Filament
 
       private def token_precedence(type : TokenType) : Precedence
         case type
-        when TokenType::Or          then Precedence::Or
-        when TokenType::And         then Precedence::And
+        when TokenType::Or  then Precedence::Or
+        when TokenType::And then Precedence::And
         when TokenType::Eq,
              TokenType::Ne,
              TokenType::Match,
-             TokenType::In          then Precedence::Equals
+             TokenType::In then Precedence::Equals
         when TokenType::Lt,
              TokenType::Le,
              TokenType::Gt,
-             TokenType::Ge          then Precedence::LessGreater
+             TokenType::Ge then Precedence::LessGreater
         else Precedence::Lowest
         end
       end

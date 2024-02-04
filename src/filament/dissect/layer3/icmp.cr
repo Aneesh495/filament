@@ -29,17 +29,17 @@ module Filament
   module Dissect
     module Layer3
       module IcmpType
-        ECHO_REPLY              = 0_u8
-        DEST_UNREACHABLE        = 3_u8
-        SOURCE_QUENCH           = 4_u8
-        REDIRECT                = 5_u8
-        ECHO_REQUEST            = 8_u8
-        ROUTER_ADVERTISEMENT    = 9_u8
-        ROUTER_SOLICITATION     = 10_u8
-        TIME_EXCEEDED           = 11_u8
-        PARAMETER_PROBLEM       = 12_u8
-        TIMESTAMP_REQUEST       = 13_u8
-        TIMESTAMP_REPLY         = 14_u8
+        ECHO_REPLY           =  0_u8
+        DEST_UNREACHABLE     =  3_u8
+        SOURCE_QUENCH        =  4_u8
+        REDIRECT             =  5_u8
+        ECHO_REQUEST         =  8_u8
+        ROUTER_ADVERTISEMENT =  9_u8
+        ROUTER_SOLICITATION  = 10_u8
+        TIME_EXCEEDED        = 11_u8
+        PARAMETER_PROBLEM    = 12_u8
+        TIMESTAMP_REQUEST    = 13_u8
+        TIMESTAMP_REPLY      = 14_u8
       end
 
       class IcmpDissector < Dissector
@@ -87,16 +87,16 @@ module Filament
           fields["icmp.checksum_valid"] = (calc_csum == 0_u16)
 
           type_name = case icmp_type
-                      when IcmpType::ECHO_REPLY           then "Echo (ping) reply"
-                      when IcmpType::DEST_UNREACHABLE     then "Destination unreachable"
-                      when IcmpType::SOURCE_QUENCH        then "Source quench"
-                      when IcmpType::REDIRECT             then "Redirect"
-                      when IcmpType::ECHO_REQUEST         then "Echo (ping) request"
-                      when IcmpType::TIME_EXCEEDED        then "Time exceeded"
-                      when IcmpType::PARAMETER_PROBLEM    then "Parameter problem"
-                      when IcmpType::TIMESTAMP_REQUEST    then "Timestamp request"
-                      when IcmpType::TIMESTAMP_REPLY      then "Timestamp reply"
-                      else "Type #{icmp_type}"
+                      when IcmpType::ECHO_REPLY        then "Echo (ping) reply"
+                      when IcmpType::DEST_UNREACHABLE  then "Destination unreachable"
+                      when IcmpType::SOURCE_QUENCH     then "Source quench"
+                      when IcmpType::REDIRECT          then "Redirect"
+                      when IcmpType::ECHO_REQUEST      then "Echo (ping) request"
+                      when IcmpType::TIME_EXCEEDED     then "Time exceeded"
+                      when IcmpType::PARAMETER_PROBLEM then "Parameter problem"
+                      when IcmpType::TIMESTAMP_REQUEST then "Timestamp request"
+                      when IcmpType::TIMESTAMP_REPLY   then "Timestamp reply"
+                      else                                  "Type #{icmp_type}"
                       end
           fields["icmp.type_name"] = type_name
 
@@ -106,7 +106,6 @@ module Filament
             seq = (data[start + 6].to_u16 << 8) | data[start + 7].to_u16
             fields["icmp.ident"] = ident.to_u32
             fields["icmp.seq"] = seq.to_u32
-
           when IcmpType::DEST_UNREACHABLE
             code_desc = case icmp_code
                         when 0 then "Net unreachable"
@@ -118,16 +117,14 @@ module Filament
                           fields["icmp.next_hop_mtu"] = next_hop_mtu.to_u32
                           "Fragmentation needed and DF set (MTU #{next_hop_mtu})"
                         when 5 then "Source route failed"
-                        else "Code #{icmp_code}"
+                        else        "Code #{icmp_code}"
                         end
             fields["icmp.code_desc"] = code_desc
             extract_embedded_ip(data, start + 8, fields)
-
           when IcmpType::TIME_EXCEEDED
             code_desc = (icmp_code == 0_u8) ? "TTL expired in transit" : "Fragment reassembly time exceeded"
             fields["icmp.code_desc"] = code_desc
             extract_embedded_ip(data, start + 8, fields)
-
           when IcmpType::REDIRECT
             gw_ip = Layer2::ArpDissector.format_ipv4(data[start + 4, 4])
             fields["icmp.gateway"] = gw_ip

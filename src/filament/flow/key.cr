@@ -38,7 +38,7 @@ module Filament
         @dst_ip : String,
         @src_port : UInt16,
         @dst_port : UInt16,
-        @proto : UInt8
+        @proto : UInt8,
       )
       end
 
@@ -97,11 +97,11 @@ module Filament
 
       def to_s(io : IO) : Nil
         proto_name = case @proto
-                     when 6  then "TCP"
+                     when  6 then "TCP"
                      when 17 then "UDP"
-                     when 1  then "ICMP"
+                     when  1 then "ICMP"
                      when 58 then "ICMPv6"
-                     else "IP(#{@proto})"
+                     else         "IP(#{@proto})"
                      end
         io << @src_ip << ":" << @src_port << " -> " << @dst_ip << ":" << @dst_port << " [" << proto_name << "]"
       end

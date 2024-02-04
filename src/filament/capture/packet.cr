@@ -57,11 +57,11 @@ module Filament
       # display in the UI or log messages.
       def description : String
         case self
-        in .null?        then "BSD Loopback"
-        in .ethernet?    then "Ethernet"
-        in .raw?         then "Raw IP"
-        in .linux_sll?   then "Linux Cooked Capture"
-        in .linux_sll2?  then "Linux Cooked Capture v2"
+        in .null?       then "BSD Loopback"
+        in .ethernet?   then "Ethernet"
+        in .raw?        then "Raw IP"
+        in .linux_sll?  then "Linux Cooked Capture"
+        in .linux_sll2? then "Linux Cooked Capture v2"
         end
       end
 
@@ -70,11 +70,11 @@ module Filament
       # Returns 0 for Raw since there's no link-layer header at all.
       def header_length : Int32
         case self
-        in .null?        then 4
-        in .ethernet?    then 14
-        in .raw?         then 0
-        in .linux_sll?   then 16
-        in .linux_sll2?  then 20
+        in .null?       then 4
+        in .ethernet?   then 14
+        in .raw?        then 0
+        in .linux_sll?  then 16
+        in .linux_sll2? then 20
         end
       end
 
@@ -154,7 +154,7 @@ module Filament
         @packet_number : UInt64 = 0_u64,
         @comment : String? = nil,
         @source : CaptureSource = CaptureSource::File,
-        @annotation : String? = nil
+        @annotation : String? = nil,
       )
       end
 
@@ -228,7 +228,7 @@ module Filament
         @original_length : UInt32,
         @capture_length : UInt32,
         @interface_id : UInt32 = 0_u32,
-        @link_type : LinkType = LinkType::Ethernet
+        @link_type : LinkType = LinkType::Ethernet,
       )
       end
 
@@ -239,7 +239,7 @@ module Filament
         original_length : UInt32,
         captured_length : UInt32,
         link_type : LinkType = LinkType::Ethernet,
-        interface_id : UInt32 = 0_u32
+        interface_id : UInt32 = 0_u32,
       )
         new(data, timestamp, original_length, captured_length, interface_id, link_type)
       end

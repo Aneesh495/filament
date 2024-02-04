@@ -26,7 +26,7 @@ describe Filament::Stats::ProtocolHierarchy do
     layers = [
       Filament::Dissect::DissectResult.new(Filament::Dissect::Protocol::Ethernet, 14_u32, 50_u32),
       Filament::Dissect::DissectResult.new(Filament::Dissect::Protocol::IPv4, 34_u32, 30_u32),
-      Filament::Dissect::DissectResult.new(Filament::Dissect::Protocol::Tcp, 54_u32, 10_u32)
+      Filament::Dissect::DissectResult.new(Filament::Dissect::Protocol::Tcp, 54_u32, 10_u32),
     ]
     decoded = Filament::Dissect::DecodedPacket.new(pkt, layers, 1_u64)
 

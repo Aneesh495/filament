@@ -21,8 +21,8 @@ module Filament
   module Capture
     # POSIX mmap flags and protection constants
     lib LibMman
-      PROT_READ = 0x01
-      MAP_SHARED = 0x0001
+      PROT_READ   =   0x01
+      MAP_SHARED  = 0x0001
       MAP_PRIVATE = 0x0002
 
       fun mmap(addr : Void*, length : LibC::SizeT, prot : LibC::Int, flags : LibC::Int, fd : LibC::Int, offset : LibC::OffT) : Void*
@@ -165,9 +165,9 @@ module Filament
 
       private def swap32(v : UInt32) : UInt32
         ((v >> 24) & 0x000000FF_u32) |
-        ((v >> 8) & 0x0000FF00_u32) |
-        ((v << 8) & 0x00FF0000_u32) |
-        ((v << 24) & 0xFF000000_u32)
+          ((v >> 8) & 0x0000FF00_u32) |
+          ((v << 8) & 0x00FF0000_u32) |
+          ((v << 24) & 0xFF000000_u32)
       end
 
       # Unmaps memory and closes underlying file

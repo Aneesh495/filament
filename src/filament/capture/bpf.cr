@@ -115,14 +115,14 @@ module Filament
       # Creates an accept-all filter program (returns snaplen)
       def self.accept_all(snap_len : UInt32 = 65535_u32) : BpfProgram
         new([
-          BpfInstruction.stmt(BpfClass::RET | BpfSrc::K, snap_len)
+          BpfInstruction.stmt(BpfClass::RET | BpfSrc::K, snap_len),
         ])
       end
 
       # Creates a reject-all filter program
       def self.reject_all : BpfProgram
         new([
-          BpfInstruction.stmt(BpfClass::RET | BpfSrc::K, 0_u32)
+          BpfInstruction.stmt(BpfClass::RET | BpfSrc::K, 0_u32),
         ])
       end
 
@@ -196,7 +196,6 @@ module Filament
             when BpfMode::LEN
               a = wire_len
             end
-
           when BpfClass::LDX
             case mode
             when BpfMode::IMM
@@ -211,13 +210,10 @@ module Filament
               return 0_u32 if offset >= cap_len
               x = ((packet[offset] & 0x0F_u8) * 4_u8).to_u32
             end
-
           when BpfClass::ST
             mem[ins.k & 0x0F_u32] = a
-
           when BpfClass::STX
             mem[ins.k & 0x0F_u32] = x
-
           when BpfClass::ALU
             rhs = (src == BpfSrc::X) ? x : ins.k
             case op
@@ -246,7 +242,6 @@ module Filament
             when BpfOp::NEG
               a = 0_u32 &- a
             end
-
           when BpfClass::JMP
             case op
             when BpfOp::JA
@@ -269,10 +264,8 @@ module Filament
               pc += ((a & target) != 0_u32 ? ins.jt : ins.jf).to_i32 + 1
               next
             end
-
           when BpfClass::RET
             return (src == BpfSrc::A) ? a : ins.k
-
           when BpfClass::MISC
             # Transfer operations
             if ins.k == 0_u32 # TAX: A -> X

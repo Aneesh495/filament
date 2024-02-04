@@ -30,8 +30,8 @@ describe Filament::Dissect::Layer2::EthernetDissector do
     data = Bytes[
       0xff, 0xff, 0xff, 0xff, 0xff, 0xff,
       0x00, 0x11, 0x22, 0x33, 0x44, 0x55,
-      0x08, 0x06,                         # ARP
-      0x00, 0x01
+      0x08, 0x06, # ARP
+      0x00, 0x01,
     ]
 
     res = dissector.dissect(data, 0_u32)
@@ -44,10 +44,10 @@ describe Filament::Dissect::Layer2::EthernetDissector do
     data = Bytes[
       0x00, 0x11, 0x22, 0x33, 0x44, 0x55,
       0x66, 0x77, 0x88, 0x99, 0xaa, 0xbb,
-      0x81, 0x00,                         # 802.1Q Tag
-      0xa0, 0x64,                         # PCP=5, DEI=0, VID=100 (0x064)
-      0x08, 0x00,                         # Inner EtherType: IPv4
-      0x45, 0x00
+      0x81, 0x00, # 802.1Q Tag
+      0xa0, 0x64, # PCP=5, DEI=0, VID=100 (0x064)
+      0x08, 0x00, # Inner EtherType: IPv4
+      0x45, 0x00,
     ]
 
     res = dissector.dissect(data, 0_u32)
@@ -106,12 +106,12 @@ describe Filament::Dissect::Layer2::SllDissector do
 
   it "dissects Linux cooked capture frame" do
     data = Bytes[
-      0x00, 0x00,                         # Packet type: Host (0)
-      0x00, 0x01,                         # ARPHRD: Ethernet (1)
-      0x00, 0x06,                         # Address length: 6
+      0x00, 0x00,                                     # Packet type: Host (0)
+      0x00, 0x01,                                     # ARPHRD: Ethernet (1)
+      0x00, 0x06,                                     # Address length: 6
       0x00, 0x11, 0x22, 0x33, 0x44, 0x55, 0x00, 0x00, # 8-byte address
-      0x08, 0x00,                         # Protocol: IPv4
-      0x45, 0x00                          # Payload
+      0x08, 0x00,                                     # Protocol: IPv4
+      0x45, 0x00                                      # Payload
     ]
 
     res = dissector.dissect(data, 0_u32)

@@ -136,7 +136,7 @@ module Filament
                         when WebSocketOpcode::CLOSE        then "Connection Close"
                         when WebSocketOpcode::PING         then "Ping"
                         when WebSocketOpcode::PONG         then "Pong"
-                        else "Opcode #{opcode}"
+                        else                                    "Opcode #{opcode}"
                         end
           fields["ws.opcode_name"] = opcode_name
 

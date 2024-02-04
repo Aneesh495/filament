@@ -20,8 +20,8 @@ describe Filament::Dissect::Layer7::DnsDissector do
       0x07, 0x65, 0x78, 0x61, 0x6d, 0x70, 0x6c, 0x65,
       0x03, 0x63, 0x6f, 0x6d,
       0x00,
-      0x00, 0x01,                         # QTYPE: A (1)
-      0x00, 0x01                          # QCLASS: IN (1)
+      0x00, 0x01, # QTYPE: A (1)
+      0x00, 0x01  # QCLASS: IN (1)
     ]
 
     res = dissector.dissect(data, 0_u32)
@@ -37,7 +37,7 @@ describe Filament::Dissect::Layer7::DnsDissector do
     # DNS Response: ID=0x5678, QR=1, QD=1, AN=1, Question "foo.com", Answer ptr to foo.com -> 93.184.216.34
     data = Bytes[
       0x56, 0x78,
-      0x81, 0x80,                         # Response, No error
+      0x81, 0x80, # Response, No error
       0x00, 0x01, 0x00, 0x01,
       0x00, 0x00, 0x00, 0x00,
       # Question: 3 "foo" 3 "com" 0 at offset 12
@@ -45,10 +45,10 @@ describe Filament::Dissect::Layer7::DnsDissector do
       0x00, 0x01, 0x00, 0x01,
       # Answer: Name is pointer 0xC00C (offset 12)
       0xc0, 0x0c,
-      0x00, 0x01, 0x00, 0x01,             # Type A, Class IN
-      0x00, 0x00, 0x01, 0x2c,             # TTL: 300
-      0x00, 0x04,                         # RDLENGTH: 4
-      0x5d, 0xb8, 0xd8, 0x22              # 93.184.216.34
+      0x00, 0x01, 0x00, 0x01, # Type A, Class IN
+      0x00, 0x00, 0x01, 0x2c, # TTL: 300
+      0x00, 0x04,             # RDLENGTH: 4
+      0x5d, 0xb8, 0xd8, 0x22  # 93.184.216.34
     ]
 
     res = dissector.dissect(data, 0_u32)
@@ -125,7 +125,7 @@ describe Filament::Dissect::Layer7::TlsDissector do
     len_bytes = Bytes[
       ((handshake_slice.size >> 16) & 0xFF).to_u8,
       ((handshake_slice.size >> 8) & 0xFF).to_u8,
-      (handshake_slice.size & 0xFF).to_u8
+      (handshake_slice.size & 0xFF).to_u8,
     ]
     handshake_io.pos = 1
     handshake_io.write(len_bytes)

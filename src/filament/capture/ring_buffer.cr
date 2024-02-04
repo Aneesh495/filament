@@ -55,7 +55,7 @@ module Filament
         @total_pushed : UInt64 = 0_u64,
         @total_dropped : UInt64 = 0_u64,
         @high_watermark : UInt32 = 0_u32,
-        @total_popped : UInt64 = 0_u64
+        @total_popped : UInt64 = 0_u64,
       )
       end
 
@@ -94,7 +94,7 @@ module Filament
     # ```
     # buffer = Filament::Capture::RingBuffer(Int32).new(1024)
     # buffer.push(42)
-    # value = buffer.pop  # => 42
+    # value = buffer.pop # => 42
     # ```
     #
     # When the buffer is full, `push` overwrites the oldest item and

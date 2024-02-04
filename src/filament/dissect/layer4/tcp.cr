@@ -36,13 +36,13 @@ module Filament
     module Layer4
       # TCP Option Kind constants
       module TcpOptionKind
-        EOL            = 0_u8  # End of Option List
-        NOP            = 1_u8  # No-Operation (padding)
-        MSS            = 2_u8  # Maximum Segment Size
-        WINDOW_SCALE   = 3_u8  # Window Scale factor (RFC 7323)
-        SACK_PERMITTED = 4_u8  # Selective ACK Permitted (RFC 2018)
-        SACK           = 5_u8  # Selective ACK (RFC 2018)
-        TIMESTAMPS     = 8_u8  # Timestamps (RFC 7323)
+        EOL            =  0_u8 # End of Option List
+        NOP            =  1_u8 # No-Operation (padding)
+        MSS            =  2_u8 # Maximum Segment Size
+        WINDOW_SCALE   =  3_u8 # Window Scale factor (RFC 7323)
+        SACK_PERMITTED =  4_u8 # Selective ACK Permitted (RFC 2018)
+        SACK           =  5_u8 # Selective ACK (RFC 2018)
+        TIMESTAMPS     =  8_u8 # Timestamps (RFC 7323)
         FAST_OPEN      = 34_u8 # TCP Fast Open (RFC 7413)
       end
 
@@ -213,17 +213,17 @@ module Filament
 
           # Demultiplex to Layer 7 protocols based on standard ports
           next_proto : Protocol? = case {src_port, dst_port}
-                                   when {80_u16, _}, {_, 80_u16}, {8080_u16, _}, {_, 8080_u16}
-                                     Protocol::Http
-                                   when {443_u16, _}, {_, 443_u16}, {8443_u16, _}, {_, 8443_u16}
-                                     Protocol::Tls
-                                   when {25_u16, _}, {_, 25_u16}, {587_u16, _}, {_, 587_u16}
-                                     Protocol::Smtp
-                                   when {53_u16, _}, {_, 53_u16}
-                                     Protocol::Dns
-                                   else
-                                     nil
-                                   end
+          when {80_u16, _}, {_, 80_u16}, {8080_u16, _}, {_, 8080_u16}
+            Protocol::Http
+          when {443_u16, _}, {_, 443_u16}, {8443_u16, _}, {_, 8443_u16}
+            Protocol::Tls
+          when {25_u16, _}, {_, 25_u16}, {587_u16, _}, {_, 587_u16}
+            Protocol::Smtp
+          when {53_u16, _}, {_, 53_u16}
+            Protocol::Dns
+          else
+            nil
+          end
 
           DissectResult.new(
             protocol: protocol,

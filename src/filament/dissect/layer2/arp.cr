@@ -92,7 +92,7 @@ module Filament
                     when ArpOpcode::REPLY        then "Reply"
                     when ArpOpcode::RARP_REQUEST then "RARP Request"
                     when ArpOpcode::RARP_REPLY   then "RARP Reply"
-                    else "Opcode #{opcode}"
+                    else                              "Opcode #{opcode}"
                     end
           fields["arp.operation_name"] = op_name
 

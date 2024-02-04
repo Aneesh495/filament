@@ -52,7 +52,7 @@ module Filament
           if raw < 0x80000000_u32
             raw.to_i64
           else
-            -( (0_u32 &- raw).to_i64 )
+            -((0_u32 &- raw).to_i64)
           end
         end
 

@@ -35,29 +35,29 @@ module Filament
     module Layer3
       # Standard IP protocol numbers (IANA)
       module IpProtocol
-        ICMP   = 1_u8
-        IGMP   = 2_u8
-        TCP    = 6_u8
-        UDP    = 17_u8
-        IPV6   = 41_u8
-        GRE    = 47_u8
-        ESP    = 50_u8
-        AH     = 51_u8
-        ICMPV6 = 58_u8
-        OSPF   = 89_u8
+        ICMP   =   1_u8
+        IGMP   =   2_u8
+        TCP    =   6_u8
+        UDP    =  17_u8
+        IPV6   =  41_u8
+        GRE    =  47_u8
+        ESP    =  50_u8
+        AH     =  51_u8
+        ICMPV6 =  58_u8
+        OSPF   =  89_u8
         SCTP   = 132_u8
       end
 
       # Known IPv4 option codes
       module IpOptionCode
-        EOOL       = 0_u8   # End of Options List
-        NOP        = 1_u8   # No Operation (padding)
-        SEC        = 130_u8 # Security
-        LSRR       = 131_u8 # Loose Source and Record Route
-        TS         = 68_u8  # Internet Timestamp
-        RR         = 7_u8   # Record Route
-        SSRR       = 137_u8 # Strict Source and Record Route
-        RA         = 148_u8 # Router Alert
+        EOOL =   0_u8 # End of Options List
+        NOP  =   1_u8 # No Operation (padding)
+        SEC  = 130_u8 # Security
+        LSRR = 131_u8 # Loose Source and Record Route
+        TS   =  68_u8 # Internet Timestamp
+        RR   =   7_u8 # Record Route
+        SSRR = 137_u8 # Strict Source and Record Route
+        RA   = 148_u8 # Router Alert
       end
 
       class IPv4Dissector < Dissector
@@ -198,7 +198,7 @@ module Filament
               when IpOptionCode::RA   then opt_names << "Router Alert"
               when IpOptionCode::LSRR then opt_names << "Loose Source Route"
               when IpOptionCode::SSRR then opt_names << "Strict Source Route"
-              else opt_names << "Option 0x#{opt_code.to_s(16)}"
+              else                         opt_names << "Option 0x#{opt_code.to_s(16)}"
               end
 
               opt_offset += opt_len
@@ -219,16 +219,16 @@ module Filament
           # Demultiplex to Layer 4
           # If datagram is a non-initial fragment, transport header cannot be reliably dissected directly
           next_proto : Protocol? = if frag_offset > 0_u16
-                                     nil
-                                   else
-                                     case proto_num
-                                     when IpProtocol::TCP    then Protocol::Tcp
-                                     when IpProtocol::UDP    then Protocol::Udp
-                                     when IpProtocol::ICMP   then Protocol::Icmp
-                                     when IpProtocol::ICMPV6 then Protocol::Icmpv6
-                                     else nil
-                                     end
-                                   end
+            nil
+          else
+            case proto_num
+            when IpProtocol::TCP    then Protocol::Tcp
+            when IpProtocol::UDP    then Protocol::Udp
+            when IpProtocol::ICMP   then Protocol::Icmp
+            when IpProtocol::ICMPV6 then Protocol::Icmpv6
+            else                         nil
+            end
+          end
 
           DissectResult.new(
             protocol: protocol,

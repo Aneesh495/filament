@@ -39,7 +39,7 @@ module Filament
           src_bytes : Bytes,
           dst_bytes : Bytes,
           udp_length : UInt16,
-          udp_segment : Bytes
+          udp_segment : Bytes,
         ) : UInt16
           sum = 0_u32
 
@@ -121,15 +121,15 @@ module Filament
 
           # Demultiplex to Layer 7 protocols based on well-known UDP ports
           next_proto : Protocol? = case {src_port, dst_port}
-                                   when {53_u16, _}, {_, 53_u16}
-                                     Protocol::Dns
-                                   when {67_u16, _}, {_, 67_u16}, {68_u16, _}, {_, 68_u16}
-                                     Protocol::Dhcp
-                                   when {123_u16, _}, {_, 123_u16}
-                                     Protocol::Ntp
-                                   else
-                                     nil
-                                   end
+          when {53_u16, _}, {_, 53_u16}
+            Protocol::Dns
+          when {67_u16, _}, {_, 67_u16}, {68_u16, _}, {_, 68_u16}
+            Protocol::Dhcp
+          when {123_u16, _}, {_, 123_u16}
+            Protocol::Ntp
+          else
+            nil
+          end
 
           DissectResult.new(
             protocol: protocol,

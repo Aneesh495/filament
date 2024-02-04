@@ -21,13 +21,13 @@ module Filament
   module Dissect
     module Layer2
       module PppProtocol
-        IPV4 = 0x0021_u16
-        IPV6 = 0x0057_u16
-        IPCP = 0x8021_u16
+        IPV4   = 0x0021_u16
+        IPV6   = 0x0057_u16
+        IPCP   = 0x8021_u16
         IPV6CP = 0x8057_u16
-        LCP  = 0xC021_u16
-        PAP  = 0xC023_u16
-        CHAP = 0xC223_u16
+        LCP    = 0xC021_u16
+        PAP    = 0xC023_u16
+        CHAP   = 0xC223_u16
       end
 
       class PppDissector < Dissector
@@ -82,10 +82,10 @@ module Filament
           payload_len = data.size.to_u32 - payload_offset
 
           next_proto : Protocol? = case proto_id
-                                   when PppProtocol::IPV4 then Protocol::IPv4
-                                   when PppProtocol::IPV6 then Protocol::IPv6
-                                   else nil
-                                   end
+          when PppProtocol::IPV4 then Protocol::IPv4
+          when PppProtocol::IPV6 then Protocol::IPv6
+          else                        nil
+          end
 
           DissectResult.new(
             protocol: protocol,

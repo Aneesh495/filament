@@ -74,11 +74,11 @@ module Filament
           payload_len = data.size.to_u32 - payload_offset
 
           next_proto : Protocol? = case ethertype
-                                   when EtherType::IPV4 then Protocol::IPv4
-                                   when EtherType::IPV6 then Protocol::IPv6
-                                   when EtherType::ARP  then Protocol::Arp
-                                   else nil
-                                   end
+          when EtherType::IPV4 then Protocol::IPv4
+          when EtherType::IPV6 then Protocol::IPv6
+          when EtherType::ARP  then Protocol::Arp
+          else                      nil
+          end
 
           DissectResult.new(
             protocol: protocol,

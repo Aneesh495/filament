@@ -92,11 +92,11 @@ module Filament
     # captured packet. The full list is enormous (see tcpdump.org/linktypes),
     # but we only support the ones that actually matter in practice.
 
-    LINKTYPE_NULL        =   0_u32 # BSD loopback encapsulation
-    LINKTYPE_ETHERNET    =   1_u32 # Good old Ethernet II
-    LINKTYPE_RAW         = 101_u32 # Raw IP, no link-layer header
-    LINKTYPE_LINUX_SLL   = 113_u32 # Linux "cooked" capture
-    LINKTYPE_LINUX_SLL2  = 276_u32 # Linux "cooked" v2 (newer kernels)
+    LINKTYPE_NULL       =   0_u32 # BSD loopback encapsulation
+    LINKTYPE_ETHERNET   =   1_u32 # Good old Ethernet II
+    LINKTYPE_RAW        = 101_u32 # Raw IP, no link-layer header
+    LINKTYPE_LINUX_SLL  = 113_u32 # Linux "cooked" capture
+    LINKTYPE_LINUX_SLL2 = 276_u32 # Linux "cooked" v2 (newer kernels)
 
     # -------------------------------------------------------------------------
     # PcapHeader - the 24-byte global file header
@@ -108,8 +108,8 @@ module Filament
     #
     # ```
     # reader = Filament::Capture::PcapReader.new("capture.pcap")
-    # puts reader.header.link_type  # => 1 (Ethernet)
-    # puts reader.header.snaplen    # => 65535
+    # puts reader.header.link_type # => 1 (Ethernet)
+    # puts reader.header.snaplen   # => 65535
     # ```
     struct PcapHeader
       # The magic number. In a properly read file this will always be
@@ -145,19 +145,19 @@ module Filament
         @thiszone : Int32,
         @sigfigs : UInt32,
         @snaplen : UInt32,
-        @link_type : UInt32
+        @link_type : UInt32,
       )
       end
 
       # Returns a human-readable description of the link type.
       def link_type_name : String
         case @link_type
-        when LINKTYPE_NULL      then "Null/Loopback"
-        when LINKTYPE_ETHERNET  then "Ethernet"
-        when LINKTYPE_RAW       then "Raw IP"
-        when LINKTYPE_LINUX_SLL then "Linux Cooked Capture"
+        when LINKTYPE_NULL       then "Null/Loopback"
+        when LINKTYPE_ETHERNET   then "Ethernet"
+        when LINKTYPE_RAW        then "Raw IP"
+        when LINKTYPE_LINUX_SLL  then "Linux Cooked Capture"
         when LINKTYPE_LINUX_SLL2 then "Linux Cooked Capture v2"
-        else                         "Unknown (#{@link_type})"
+        else                          "Unknown (#{@link_type})"
         end
       end
 

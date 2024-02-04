@@ -70,53 +70,44 @@ module Filament
           c_idx = add_const(expr.value)
           emit(Instruction.new(Opcode::LoadConst, dst: dst, const_idx: c_idx))
           dst
-
         when StringLiteralExpr
           dst = alloc_reg
           c_idx = add_const(expr.value)
           emit(Instruction.new(Opcode::LoadConst, dst: dst, const_idx: c_idx))
           dst
-
         when BoolLiteralExpr
           dst = alloc_reg
           c_idx = add_const(expr.value)
           emit(Instruction.new(Opcode::LoadConst, dst: dst, const_idx: c_idx))
           dst
-
         when IpLiteralExpr
           dst = alloc_reg
           c_idx = add_const(expr.text)
           emit(Instruction.new(Opcode::LoadConst, dst: dst, const_idx: c_idx))
           dst
-
         when CidrLiteralExpr
           dst = alloc_reg
           c_idx = add_const(expr)
           emit(Instruction.new(Opcode::LoadConst, dst: dst, const_idx: c_idx))
           dst
-
         when ProtocolPresentExpr
           dst = alloc_reg
           c_idx = add_const(expr.protocol_name)
           emit(Instruction.new(Opcode::CheckProto, dst: dst, const_idx: c_idx))
           dst
-
         when FieldAccessExpr
           dst = alloc_reg
           c_idx = add_const(expr.field_name)
           emit(Instruction.new(Opcode::LoadField, dst: dst, const_idx: c_idx))
           dst
-
         when UnaryOpExpr
           sub_reg = compile_expr(expr.expr)
           dst = alloc_reg
           emit(Instruction.new(Opcode::LogicalNot, dst: dst, src1: sub_reg))
           free_reg # free sub_reg
           dst
-
         when BinaryOpExpr
           compile_binary(expr)
-
         else
           dst = alloc_reg
           c_idx = add_const(true)
@@ -146,7 +137,7 @@ module Filament
                     when TokenType::Ge    then Opcode::CmpGe
                     when TokenType::Match then Opcode::CmpMatch
                     when TokenType::In    then Opcode::CheckCidr
-                    else Opcode::CmpEq
+                    else                       Opcode::CmpEq
                     end
 
           emit(Instruction.new(op_code, dst: dst, src1: left_reg, src2: right_reg))

@@ -105,7 +105,7 @@ module Filament
         @description : String? = nil,
         @loopback : Bool = false,
         @up : Bool = false,
-        @running : Bool = false
+        @running : Bool = false,
       )
       end
     end
@@ -183,7 +183,7 @@ module Filament
         @snap_len : Int32 = 65535,
         @promiscuous : Bool = true,
         @timeout_ms : Int32 = 1000,
-        filter : String? = nil
+        filter : String? = nil,
       )
         @active = false
         @bpf_program = LibPcap::BpfProgramRaw.new

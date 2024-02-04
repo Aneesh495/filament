@@ -29,7 +29,7 @@ module Filament
         @max_flows : Int32 = 100_000,
         @tcp_idle_timeout_sec : Float64 = 300.0,
         @udp_idle_timeout_sec : Float64 = 60.0,
-        @tcp_closed_timeout_sec : Float64 = 15.0
+        @tcp_closed_timeout_sec : Float64 = 15.0,
       )
       end
 

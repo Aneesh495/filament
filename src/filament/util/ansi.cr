@@ -42,12 +42,12 @@ module Filament
       # Returns colorized string matching protocol palette
       def self.colorize_protocol(proto : Dissect::Protocol, text : String) : String
         case proto
-        when Dissect::Protocol::Ethernet  then "#{CYAN}#{text}#{RESET}"
-        when Dissect::Protocol::Arp       then "#{YELLOW}#{text}#{RESET}"
-        when Dissect::Protocol::IPv4      then "#{BLUE}#{text}#{RESET}"
-        when Dissect::Protocol::IPv6      then "#{BRIGHT_BLUE}#{text}#{RESET}"
+        when Dissect::Protocol::Ethernet then "#{CYAN}#{text}#{RESET}"
+        when Dissect::Protocol::Arp      then "#{YELLOW}#{text}#{RESET}"
+        when Dissect::Protocol::IPv4     then "#{BLUE}#{text}#{RESET}"
+        when Dissect::Protocol::IPv6     then "#{BRIGHT_BLUE}#{text}#{RESET}"
         when Dissect::Protocol::Icmp,
-             Dissect::Protocol::Icmpv6    then "#{BRIGHT_YELLOW}#{text}#{RESET}"
+             Dissect::Protocol::Icmpv6 then "#{BRIGHT_YELLOW}#{text}#{RESET}"
         when Dissect::Protocol::Tcp       then "#{GREEN}#{text}#{RESET}"
         when Dissect::Protocol::Udp       then "#{BRIGHT_CYAN}#{text}#{RESET}"
         when Dissect::Protocol::Dns       then "#{MAGENTA}#{text}#{RESET}"
@@ -56,7 +56,7 @@ module Filament
         when Dissect::Protocol::Dhcp      then "#{YELLOW}#{text}#{RESET}"
         when Dissect::Protocol::Ntp       then "#{CYAN}#{text}#{RESET}"
         when Dissect::Protocol::WebSocket then "#{BRIGHT_WHITE}#{text}#{RESET}"
-        else "#{WHITE}#{text}#{RESET}"
+        else                                   "#{WHITE}#{text}#{RESET}"
         end
       end
 

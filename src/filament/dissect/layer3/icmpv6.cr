@@ -24,17 +24,17 @@ module Filament
   module Dissect
     module Layer3
       module Icmpv6Type
-        DEST_UNREACHABLE     = 1_u8
-        PACKET_TOO_BIG       = 2_u8
-        TIME_EXCEEDED        = 3_u8
-        PARAMETER_PROBLEM    = 4_u8
-        ECHO_REQUEST         = 128_u8
-        ECHO_REPLY           = 129_u8
-        ROUTER_SOLICITATION  = 133_u8
-        ROUTER_ADVERT        = 134_u8
-        NEIGHBOR_SOLICIT     = 135_u8
-        NEIGHBOR_ADVERT      = 136_u8
-        REDIRECT             = 137_u8
+        DEST_UNREACHABLE    =   1_u8
+        PACKET_TOO_BIG      =   2_u8
+        TIME_EXCEEDED       =   3_u8
+        PARAMETER_PROBLEM   =   4_u8
+        ECHO_REQUEST        = 128_u8
+        ECHO_REPLY          = 129_u8
+        ROUTER_SOLICITATION = 133_u8
+        ROUTER_ADVERT       = 134_u8
+        NEIGHBOR_SOLICIT    = 135_u8
+        NEIGHBOR_ADVERT     = 136_u8
+        REDIRECT            = 137_u8
       end
 
       class Icmpv6Dissector < Dissector
@@ -84,7 +84,7 @@ module Filament
                       when Icmpv6Type::NEIGHBOR_SOLICIT    then "Neighbor Solicitation"
                       when Icmpv6Type::NEIGHBOR_ADVERT     then "Neighbor Advertisement"
                       when Icmpv6Type::REDIRECT            then "Redirect"
-                      else "Type #{msg_type}"
+                      else                                      "Type #{msg_type}"
                       end
           fields["icmpv6.type_name"] = type_name
 
@@ -94,21 +94,18 @@ module Filament
             seq = (data[start + 6].to_u16 << 8) | data[start + 7].to_u16
             fields["icmpv6.ident"] = ident.to_u32
             fields["icmpv6.seq"] = seq.to_u32
-
           when Icmpv6Type::PACKET_TOO_BIG
             mtu = (data[start + 4].to_u32 << 24) |
                   (data[start + 5].to_u32 << 16) |
                   (data[start + 6].to_u32 << 8) |
                   data[start + 7].to_u32
             fields["icmpv6.mtu"] = mtu
-
           when Icmpv6Type::NEIGHBOR_SOLICIT
             if available >= 24_u32
               target_ip = IPv6Dissector.format_ipv6(data[start + 8, 16])
               fields["icmpv6.target_ip"] = target_ip
               parse_ndp_options(data, start + 24, available.to_i32 - 24, fields)
             end
-
           when Icmpv6Type::NEIGHBOR_ADVERT
             if available >= 24_u32
               flags_byte = data[start + 4]

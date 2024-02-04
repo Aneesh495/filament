@@ -9,11 +9,11 @@ describe Filament::Dissect::Layer4::UdpDissector do
 
   it "dissects UDP datagram header" do
     data = Bytes[
-      0x04, 0xd2,                         # Src Port: 1234
-      0x00, 0x35,                         # Dst Port: 53 (DNS)
-      0x00, 0x0c,                         # Length: 12 bytes
-      0x12, 0x34,                         # Checksum
-      0xaa, 0xbb, 0xcc, 0xdd              # 4 bytes UDP payload
+      0x04, 0xd2,            # Src Port: 1234
+      0x00, 0x35,            # Dst Port: 53 (DNS)
+      0x00, 0x0c,            # Length: 12 bytes
+      0x12, 0x34,            # Checksum
+      0xaa, 0xbb, 0xcc, 0xdd # 4 bytes UDP payload
     ]
 
     res = dissector.dissect(data, 0_u32)
@@ -31,20 +31,20 @@ describe Filament::Dissect::Layer4::TcpDissector do
 
   it "dissects TCP segment with SYN and MSS option" do
     data = Bytes[
-      0xcc, 0x12,                         # Src Port: 52242
-      0x01, 0xbb,                         # Dst Port: 443 (HTTPS)
-      0x10, 0x20, 0x30, 0x40,             # Seq: 0x10203040
-      0x00, 0x00, 0x00, 0x00,             # Ack: 0
-      0x80, 0x02,                         # Data Offset: 8 words (32 bytes), Flags: SYN
-      0xfa, 0xf0,                         # Window Size: 64240
-      0x12, 0x34,                         # Checksum
-      0x00, 0x00,                         # Urgent Pointer
+      0xcc, 0x12,             # Src Port: 52242
+      0x01, 0xbb,             # Dst Port: 443 (HTTPS)
+      0x10, 0x20, 0x30, 0x40, # Seq: 0x10203040
+      0x00, 0x00, 0x00, 0x00, # Ack: 0
+      0x80, 0x02,             # Data Offset: 8 words (32 bytes), Flags: SYN
+      0xfa, 0xf0,             # Window Size: 64240
+      0x12, 0x34,             # Checksum
+      0x00, 0x00,             # Urgent Pointer
       # Options: 12 bytes
-      0x02, 0x04, 0x05, 0xb4,             # MSS: 1460 (0x05b4)
-      0x01,                               # NOP
-      0x03, 0x03, 0x07,                   # Window Scale: 7
-      0x04, 0x02,                         # SACK Permitted
-      0x00, 0x00                          # EOL / Padding
+      0x02, 0x04, 0x05, 0xb4, # MSS: 1460 (0x05b4)
+      0x01,                   # NOP
+      0x03, 0x03, 0x07,       # Window Scale: 7
+      0x04, 0x02,             # SACK Permitted
+      0x00, 0x00              # EOL / Padding
     ]
 
     res = dissector.dissect(data, 0_u32)

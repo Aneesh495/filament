@@ -103,19 +103,19 @@ module Filament
             hval = line[colon_idx + 1..].strip
 
             case hname
-            when "host"             then fields["http.host"] = hval
-            when "user-agent"       then fields["http.user_agent"] = hval
-            when "content-type"     then fields["http.content_type"] = hval
+            when "host"         then fields["http.host"] = hval
+            when "user-agent"   then fields["http.user_agent"] = hval
+            when "content-type" then fields["http.content_type"] = hval
             when "content-length"
               if cl = hval.to_u32?
                 fields["http.content_length"] = cl
               end
             when "transfer-encoding" then fields["http.transfer_encoding"] = hval
-            when "server"           then fields["http.server"] = hval
-            when "location"         then fields["http.location"] = hval
-            when "authorization"    then fields["http.authorization"] = "<redacted>"
-            when "cookie"           then fields["http.cookie"] = hval
-            when "set-cookie"       then fields["http.set_cookie"] = hval
+            when "server"            then fields["http.server"] = hval
+            when "location"          then fields["http.location"] = hval
+            when "authorization"     then fields["http.authorization"] = "<redacted>"
+            when "cookie"            then fields["http.cookie"] = hval
+            when "set-cookie"        then fields["http.set_cookie"] = hval
             end
           end
 

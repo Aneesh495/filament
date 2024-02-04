@@ -54,7 +54,7 @@ module Filament
         @src1 : UInt8 = 0_u8,
         @src2 : UInt8 = 0_u8,
         @const_idx : UInt16 = 0_u16,
-        @target : Int32 = 0
+        @target : Int32 = 0,
       )
       end
 
@@ -76,7 +76,7 @@ module Filament
       def initialize(
         @instructions : Array(Instruction),
         @constants : Array(FilterConstant),
-        @register_count : Int32
+        @register_count : Int32,
       )
       end
 
@@ -84,7 +84,7 @@ module Filament
       def self.accept_all : CompiledFilter
         insts = [
           Instruction.new(Opcode::LoadConst, dst: 0_u8, const_idx: 0_u16),
-          Instruction.new(Opcode::Return, src1: 0_u8)
+          Instruction.new(Opcode::Return, src1: 0_u8),
         ]
         new(insts, [true.as(FilterConstant)], 1)
       end

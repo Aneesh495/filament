@@ -28,20 +28,20 @@ module Filament
       Not
 
       # Relational and Set Operators
-      Eq       # ==
-      Ne       # !=
-      Lt       # <
-      Le       # <=
-      Gt       # >
-      Ge       # >=
-      Match    # ~= (regex / substring match)
-      In       # in
+      Eq    # ==
+      Ne    # !=
+      Lt    # <
+      Le    # <=
+      Gt    # >
+      Ge    # >=
+      Match # ~= (regex / substring match)
+      In    # in
 
       # Delimiters
-      LParen   # (
-      RParen   # )
-      Comma    # ,
-      Slash    # /
+      LParen # (
+      RParen # )
+      Comma  # ,
+      Slash  # /
 
       # Stream Control
       Eof

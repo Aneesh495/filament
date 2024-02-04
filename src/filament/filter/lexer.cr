@@ -182,7 +182,7 @@ module Filament
                     when "in"    then Token.new(TokenType::In, ident, token_line, token_col)
                     when "true"  then Token.new(TokenType::True, ident, token_line, token_col)
                     when "false" then Token.new(TokenType::False, ident, token_line, token_col)
-                    else Token.new(TokenType::Ident, ident, token_line, token_col)
+                    else              Token.new(TokenType::Ident, ident, token_line, token_col)
                     end
                   else
                     illegal_char = @ch
@@ -210,7 +210,7 @@ module Filament
               when '\\' then io << '\\'
               when '"'  then io << '"'
               when '\'' then io << '\''
-              else io << @ch
+              else           io << @ch
               end
             else
               io << @ch

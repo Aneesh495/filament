@@ -102,7 +102,7 @@ module Filament
         @name : String? = nil,
         @description : String? = nil,
         @ts_resolution : UInt8 = 6_u8, # Default to 10^-6 (microseconds)
-        @ts_is_power_of_two : Bool = false
+        @ts_is_power_of_two : Bool = false,
       )
       end
 
@@ -450,20 +450,20 @@ module Filament
       # Byte swapping utilities
       private def swap32(val : UInt32) : UInt32
         ((val >> 24) & 0x000000FF_u32) |
-        ((val >> 8) & 0x0000FF00_u32) |
-        ((val << 8) & 0x00FF0000_u32) |
-        ((val << 24) & 0xFF000000_u32)
+          ((val >> 8) & 0x0000FF00_u32) |
+          ((val << 8) & 0x00FF0000_u32) |
+          ((val << 24) & 0xFF000000_u32)
       end
 
       private def swap64(val : UInt64) : UInt64
         ((val >> 56) & 0x00000000000000FF_u64) |
-        ((val >> 40) & 0x000000000000FF00_u64) |
-        ((val >> 24) & 0x0000000000FF0000_u64) |
-        ((val >> 8) & 0x00000000FF000000_u64) |
-        ((val << 8) & 0x000000FF00000000_u64) |
-        ((val << 24) & 0x0000FF0000000000_u64) |
-        ((val << 40) & 0x00FF000000000000_u64) |
-        ((val << 56) & 0xFF00000000000000_u64)
+          ((val >> 40) & 0x000000000000FF00_u64) |
+          ((val >> 24) & 0x0000000000FF0000_u64) |
+          ((val >> 8) & 0x00000000FF000000_u64) |
+          ((val << 8) & 0x000000FF00000000_u64) |
+          ((val << 24) & 0x0000FF0000000000_u64) |
+          ((val << 40) & 0x00FF000000000000_u64) |
+          ((val << 56) & 0xFF00000000000000_u64)
       end
 
       # Safely skip n bytes in the input stream

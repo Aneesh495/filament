@@ -29,12 +29,12 @@ module Filament
       end
 
       module TlsHandshakeType
-        HELLO_REQUEST       = 0_u8
-        CLIENT_HELLO        = 1_u8
-        SERVER_HELLO        = 2_u8
-        NEW_SESSION_TICKET  = 4_u8
-        END_OF_EARLY_DATA   = 5_u8
-        ENCRYPTED_EXTS      = 8_u8
+        HELLO_REQUEST       =  0_u8
+        CLIENT_HELLO        =  1_u8
+        SERVER_HELLO        =  2_u8
+        NEW_SESSION_TICKET  =  4_u8
+        END_OF_EARLY_DATA   =  5_u8
+        ENCRYPTED_EXTS      =  8_u8
         CERTIFICATE         = 11_u8
         SERVER_KEY_EXCHANGE = 12_u8
         CERT_REQUEST        = 13_u8
@@ -45,7 +45,7 @@ module Filament
       end
 
       module TlsExtensionType
-        SERVER_NAME      = 0_u16  # SNI (RFC 6066)
+        SERVER_NAME      =  0_u16 # SNI (RFC 6066)
         SUPPORTED_GROUPS = 10_u16 # Elliptic curves (RFC 8422)
         SIGNATURE_ALGS   = 13_u16 # (RFC 5246)
         ALPN             = 16_u16 # Application-Layer Protocol Negotiation (RFC 7301)
@@ -70,7 +70,7 @@ module Filament
           when 0x0302_u16 then "TLS 1.1"
           when 0x0303_u16 then "TLS 1.2"
           when 0x0304_u16 then "TLS 1.3"
-          else "0x#{ver.to_s(16)}"
+          else                 "0x#{ver.to_s(16)}"
           end
         end
 
@@ -88,7 +88,7 @@ module Filament
           when 0xCCA9_u16 then "TLS_ECDHE_ECDSA_WITH_CHACHA20_POLY1305_SHA256"
           when 0x009C_u16 then "TLS_RSA_WITH_AES_128_GCM_SHA256"
           when 0x009D_u16 then "TLS_RSA_WITH_AES_256_GCM_SHA384"
-          else "0x#{cs.to_s(16).rjust(4, '0')}"
+          else                 "0x#{cs.to_s(16).rjust(4, '0')}"
           end
         end
 
@@ -124,7 +124,7 @@ module Filament
                      when TlsContentType::HANDSHAKE          then "Handshake"
                      when TlsContentType::APPLICATION_DATA   then "Application Data"
                      when TlsContentType::HEARTBEAT          then "Heartbeat"
-                     else "ContentType #{content_type}"
+                     else                                         "ContentType #{content_type}"
                      end
           fields["tls.type"] = type_str
 

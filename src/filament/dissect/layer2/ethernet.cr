@@ -132,7 +132,7 @@ module Filament
             ethertype = inner_ethertype
             hdr_len = 18_u32
             current_offset = offset + 18_u32
-          # Handle 802.1ad QinQ Double VLAN tags
+            # Handle 802.1ad QinQ Double VLAN tags
           elsif ethertype == EtherType::VLAN_QINQ && available >= 22_u32
             outer_tci = (data[start_idx + 14].to_u16 << 8) | data[start_idx + 15].to_u16
             outer_vid = outer_tci & 0x0FFF_u16
@@ -157,15 +157,15 @@ module Filament
 
           # Demultiplex to Layer 3
           next_proto : Protocol? = case ethertype
-                                   when EtherType::IPV4
-                                     Protocol::IPv4
-                                   when EtherType::IPV6
-                                     Protocol::IPv6
-                                   when EtherType::ARP
-                                     Protocol::Arp
-                                   else
-                                     nil
-                                   end
+          when EtherType::IPV4
+            Protocol::IPv4
+          when EtherType::IPV6
+            Protocol::IPv6
+          when EtherType::ARP
+            Protocol::Arp
+          else
+            nil
+          end
 
           DissectResult.new(
             protocol: protocol,
